@@ -43,5 +43,77 @@ The dataset consists of 16 manually entered customer data points representing tw
 | | `plt.title()`, `plt.xlabel()`, `plt.ylabel()`, `plt.legend()`, `plt.grid()`, `plt.show()` | Configures labels, legend, gridlines, and displays the final graph |
 
 ## Program & Output
+# 1. Import required libraries
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+
+# 2. Enter the customer dataset
+annual_income = np.array([
+    20, 22, 25, 70, 75, 80, 30, 35,
+    32, 24, 28, 75, 71, 83, 28, 27
+])
+
+spending_score = np.array([
+    30, 35, 40, 80, 85, 90, 70, 75,
+    33, 31, 45, 70, 83, 89, 60, 67
+])
+
+# 3. Combine the two features into one 2D matrix
+X = np.column_stack((annual_income, spending_score))
+
+print("Customer feature matrix (Income, Spending Score):")
+print(X)
+print("Dataset shape:", X.shape)
+
+# 4. Initialize and fit the K-Means model with K = 3
+kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+cluster_labels = kmeans.fit_predict(X)
+
+# 5. Retrieve cluster centroids and assigned labels
+centroids = kmeans.cluster_centers_
+labels = kmeans.labels_
+
+print("Cluster labels assigned to each customer:")
+print(labels)
+
+print("\\nCluster centroids (Income, Spending Score):")
+for cluster_id, centroid in enumerate(centroids):
+    print(
+        f"Cluster {cluster_id}: "
+        f"Income = {centroid[0]:.2f} Lakhs, "
+        f"Spending Score = {centroid[1]:.2f}"
+    )
+# 6. Visualize the clusters and their centroids
+plt.figure(figsize=(9, 6))
+
+for cluster_id in range(3):
+    cluster_points = X[cluster_labels == cluster_id]
+    plt.scatter(
+        cluster_points[:, 0],
+        cluster_points[:, 1],
+        s=90,
+        label=f"Cluster {cluster_id}"
+    )
+
+plt.scatter(
+    centroids[:, 0],
+    centroids[:, 1],
+    s=250,
+    marker="X",
+    color="black",
+    edgecolor="white",
+    linewidth=1.5,
+    label="Centroids"
+)
+
+plt.title("K-Means Customer Segmentation (K = 3)")
+plt.xlabel("Annual Income (Lakhs)")
+plt.ylabel("Spending Score (1–100)")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
 
 ## Result
